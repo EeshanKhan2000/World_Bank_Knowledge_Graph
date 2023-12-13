@@ -1,0 +1,110 @@
+{
+    "filters": {
+        "exact": {
+            "country": {
+                "value": "Republic of India",
+                "colname": "countryname"
+            },
+            "region": {
+                "value": null,
+                "colname": "regionname"
+            },
+            "status": {
+                "value": "Active",
+                "colname": "projectstatusdisplay"
+            },
+            "env_category_code": {
+                "value": null,
+                "colname": "envassesmentcategorycode"
+            },
+            "env_social_risk_rate": {
+                "value": null,
+                "colname": "esrc_ovrl_risk_rate"
+            },
+            "borrower": {
+                "value": null,
+                "colname": "borrower"
+            },
+            "implimenting_agency": {
+                "value": null,
+                "colname": "impagency"
+            },
+            "consulting_needed": {
+                "value": null,
+                "colname": "cons_serv_reqd_ind"
+            }
+        },
+        "range": {
+            "date_range": {
+                "range": [
+                    null,
+                    null
+                ],
+                "colname": "closingdate"
+            },
+            "amount_commitment_range": {
+                "range": [
+                    null,
+                    null
+                ],
+                "colname": "curr_total_commitment"
+            }
+        },
+        "num_pdfs": 5
+    },
+
+    "scrape_data": {
+        "titles": ["abstract", "pdo", "closing_date", "curr_total_commitment", "impagency", "borrower", "team_leader"],
+        "xpaths": [
+            {
+                "find": "//*[@id=\"abstract\"]/div/div/div[2]/div/div/div/div/a",
+                "click": "//*[@id=\"abstract\"]/div/div/div[2]/div/div/div/div/a",
+                "content": "//*[@id=\"abstract\"]/div/div/div[2]/div/div/div/div"
+            },
+
+            {
+                "find": "//*[@id=\"development-objective\"]/div/div/div[2]/div/div/div/div",
+                "click": "",
+                "content": "//*[@id=\"development-objective\"]/div/div/div[2]/div/div/div/div"
+            },
+
+            {
+                "find": "//*[@id=\"key-details\"]/div/div/div[1]/div/div/h2",
+                "click": "",
+                "content": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[4]/li[2]"
+            },
+
+            {
+                "find": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[3]/li[3]/p",
+                "click": "",
+                "content": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[3]/li[3]/p"
+            },
+
+            {
+                "find": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[2]/li[4]/p",
+                "click": "",
+                "content": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[2]/li[4]/p"
+            },
+
+            {
+                "find": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[1]/li[4]/p",
+                "click": "",
+                "content": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[1]/li[4]/p"
+            },
+
+            {
+                "find": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[1]/li[3]/p",
+                "click": "",
+                "content": "//*[@id=\"key-details\"]/div/div/div[2]/div/div/div[2]/ul[1]/li[3]/p"
+            }
+
+        ],
+
+        "url_prefix": "https://projects.worldbank.org/",
+        "url_postfix": "/null?lang=en",
+        "save_pdfs_folder": "D:/Coding/ScriptsProjects/ML/NLP/Taiyo/code/wb_pdfs",
+        "source_file_path": "D:/Coding/ScriptsProjects/ML/NLP/Taiyo/all.xls"
+    
+    },
+    "use_pdf_ner_embedddings": false
+}
