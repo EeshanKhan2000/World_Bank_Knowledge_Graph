@@ -1,0 +1,6 @@
+The LLM works as follows for KG creation:
+
+1. Chunk the text (this can also be further explored)
+2. Do Concept extraction (as opposed to NER), to populate nodes of the KG.
+3. There are two types of edges obtained: those of relations, and those of contextual proximity (due to concepts belonging in the same chunk). 1st has weight w1, and 2nd has w2. 
+*4. Similar nodes are grouped together, and their edges are summed. This is the step which could involve extracing embeddings. 
