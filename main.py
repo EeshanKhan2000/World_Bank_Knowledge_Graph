@@ -15,7 +15,7 @@ from langchain.graphs import Neo4jGraph as Graph
 
 from getAPI import apply_filters, get_all_pdf
 from multiScrape import scrape
-from helpers import documents2Dataframe, df2Graph, graph2Df
+from helpers import documents2Dataframe, df2Graph, graph2Df, contextual_proximity
 
 
 def make_final_df(scraped_results, df):
@@ -79,32 +79,6 @@ def make_graph_source(base_folder, graph_source_path, config_data, save_filtered
         get_all_pdf(pids[:num], save_folder)
     
     #return scraped_results
-
-
-def contextual_proximity(df: pd.DataFrame) -> pd.DataFrame:
-    ## Melt the dataframe into a list of nodes
-    dfg_long = pd.melt(
-        df, id_vars=["chunk_id"], value_vars=["node_1", "node_2"], value_name="node"
-    )
-    dfg_long.drop(columns=["variable"], inplace=True)
-    # Self join with chunk id as the key will create a link between terms occuring in the same text chunk.
-    dfg_wide = pd.merge(dfg_long, dfg_long, on="chunk_id", suffixes=("_1", "_2"))
-    # drop self loops
-    self_loops_drop = dfg_wide[dfg_wide["node_1"] == dfg_wide["node_2"]].index
-    dfg2 = dfg_wide.drop(index=self_loops_drop).reset_index(drop=True)
-    ## Group and count edges.
-    dfg2 = (
-        dfg2.groupby(["node_1", "node_2"])
-        .agg({"chunk_id": [",".join, "count"]})
-        .reset_index()
-    )
-    dfg2.columns = ["node_1", "node_2", "chunk_id", "count"]
-    dfg2.replace("", nan, inplace=True)
-    dfg2.dropna(subset=["node_1", "node_2"], inplace=True)
-    # Drop edges with 1 count
-    dfg2 = dfg2[dfg2["count"] != 1]
-    #dfg2["edge"] = "contextual proximity"
-    return dfg2
 
 
 def get_and_save_source_component(base_folder, graph_source_path, config_path):
