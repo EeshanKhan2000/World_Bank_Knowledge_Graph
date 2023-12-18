@@ -2,6 +2,7 @@ import uuid
 import pandas as pd
 import numpy as np
 from py2neo import Node, Relationship
+from numpy import nan
 from .prompts import Prompt
 
 

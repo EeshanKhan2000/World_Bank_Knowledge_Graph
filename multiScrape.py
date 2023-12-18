@@ -28,10 +28,10 @@ class Scrape:
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         
-        if len(source_name != 0):
-            config_file = base_folder + f"params/{source_name}_params.json"
+        if len(source_name) != 0:
+            config_file = base_folder + f"/params/{source_name}_params.json"
         else:
-            config_file = base_folder + f"params/{source_name}_params.json"
+            config_file = base_folder + f"/params/params.json"
 
         with open(config_file, 'r') as f:
             self.config = json.load(f)
@@ -81,7 +81,7 @@ class Scrape:
                 
                 if selection is not None:
                     text = selection[0].text
-                    text = selection.strip()
+                    text = text.strip()
                     text_dict[self.scrape_titles[i]] = text 
             except Exception as e:
                 print(f"Error in getting text content of the xpath for {self.scrape_titles[i]}: {e}")
@@ -91,14 +91,42 @@ class Scrape:
 
     def scrape(self, compute_url = False, **kwargs):
         urls = kwargs.get("urls", None)
-        pids = kwargs.get("pids", [i for i in range(len(urls))])
+        pids = kwargs.get("pids", [i for i in range(len(urls)) if urls is not None])
 
         if urls is None and not compute_url:
             raise Exception("urls neither provided nor computable")
         
-        n = len(urls)
-        with tqdm_joblib(desc="processed download requests", total=n) as progress_bar:
-            results = Parallel(n_jobs = Scrape.max_workers)(delayed(self.worker)(pids[i], urls[i]) for i in range(len(urls)))
+        # n = len(urls)
+        # with tqdm_joblib(desc="processed download requests", total=n) as progress_bar:
+        #     results = list(Parallel(n_jobs = Scrape.max_workers)(delayed(self.worker)(pids[i], urls[i]) for i in range(len(urls))))
+
+        with ThreadPoolExecutor(max_workers=Scrape.max_workers) as executor:
+            results = list(executor.map(self.worker, pids, urls)) 
+        
+        return results
+
+class Scrape_WorldBank(Scrape):
+    def __init__(self, base_folder):
+        super().__init__(base_folder, source_name = "worldbank")
+    
+    def scrape(self, compute_url=False, **kwargs):
+        urls = kwargs.get("urls", None)
+        pids = kwargs.get("pids")#, [i for i in range(len(urls)) if urls is not None])
+
+        if urls is None and not compute_url:
+            raise Exception("urls neither provided nor computable")
+
+        prefix = self.config["url_prefix"]
+        postfix = self.config["url_postfix"]
+
+        urls = [prefix + pid + postfix for pid in pids]
+
+        # n = len(urls)
+        # with tqdm_joblib(desc="processed download requests", total=n) as progress_bar:
+        #     results = list(Parallel(n_jobs = Scrape.max_workers)(delayed(self.worker)(pids[i], urls[i]) for i in range(len(urls))))
+        
+        with ThreadPoolExecutor(max_workers=Scrape.max_workers) as executor:
+            results = list(executor.map(self.worker, pids, urls))
         
         return results
         
@@ -127,50 +155,19 @@ class Scrape:
 
 
 if __name__ == "__main__":
-    pids = [
-        "P177876",
-        "P502499",
-        "P502491",
-        "P502223",
-        "P501071",
-        "P500564"
-    ]
-    #pids = ["P177876"]
+    # pids = [
+    #     "P177876",
+    #     "P502499",
+    #     "P502491",
+    #     "P502223",
+    #     "P501071",
+    #     "P500564"
+    # ]
+    pids = ["P177876"]
 
     base_folder = "D:/Coding/ScriptsProjects/ML/NLP/Taiyo/code"
-    s = Scrape(base_folder)
-    results = Scrape.scrape(pids, base_folder)
+    s = Scrape_WorldBank(base_folder)
+    results = s.scrape(compute_url = True, pids = pids)
+    print(len(results))
+    print(results[0])
 
-# =============================================================================
-# pids = [
-#     "P177876",
-#     "P502499",
-#     "P502491",
-#     "P502223",
-#     "P501071",
-#     "P500564"
-# ]
-# 
-# urls = [prefix + pid + postfix for pid in pids]
-# 
-# result = worker(urls[0], options = chrome_options)
-# 
-# ####
-# with ThreadPoolExecutor(max_workers=len(urls)) as executor:
-#     # Submit tasks to the executor
-#     results = list(executor.map(lambda u: worker(u, options=chrome_options), urls))
-# =============================================================================
-
-# Now make a main script. Make all needed functions callable in it from other scripts. 
-# Then make a script which reads from csv
-# Also try to get the all.xls from api, and then filter it, the above step can follow this one.
-# Then also modify code to scrape other needed items from here (passed in dict)
-# In main, there should be option to do bulk call (async KG) or one call at a time (test with this 1st). 
-
-# Copy KG code from repo as is, modify and run. 
-# Query it, and then make demo (as well as front end type thing). 
-# Then make doc, diagram, and write further recommendations. 
-# Also write neo4j code code to use BERT embeddings as well 
-# also NER on pdfs code. 
-
-# Also, further add contracts functionality (1st explore the API for it). 

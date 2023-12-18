@@ -50,8 +50,8 @@ def get_source_data_world_bank(source_data_file_path):
 
 def make_graph_source(base_folder, graph_source_path, config_data, save_filtered_csv = False):
 
-    source_data_file_path = config_data["scrape_data"]["source_file_path"]
-    save_folder = config_data["scrape_data"]["save_pdfs_folder"]
+    source_data_file_path = config_data["source_file_path"]
+    save_folder = config_data["save_pdfs_folder"]
     use_pdf_ner_embeddings = config_data["use_pdf_ner_embedddings"]
     num = config_data["filters"]["num_pdfs"]
 
@@ -128,11 +128,12 @@ if __name__ == '__main__':
     url = "neo4j+s://databases.neo4j.io"
     username ="neo4j"
     password = ""
-    online_graph = Graph(url = url, username = username, password = password)
+    online_graph = None #Graph(url = url, username = username, password = password)
 
     # declare paths and read config
+    web_source = "worldbank"
     base_folder = "D:/Coding/ScriptsProjects/ML/NLP/Taiyo/code"
-    config_path = base_folder + "/params.json" 
+    config_path = base_folder + f"/params/{web_source}_params.json"
     graph_source_path = base_folder + "/graph_source.csv"
     graph_path = base_folder + "/graph.csv"
 

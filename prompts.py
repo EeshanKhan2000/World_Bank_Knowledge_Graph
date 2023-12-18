@@ -1,5 +1,6 @@
 import json
 
+import transformers
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from langchain.llms import HuggingFacePipeline
